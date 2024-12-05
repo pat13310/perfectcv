@@ -1,0 +1,160 @@
+{
+  "title": "Create Your Perfect CV",
+  "home": "Home",
+  "assistant": "Assistant",
+  "templates": "Templates",
+  "preview": "Preview",
+  "subtitle": "In Just Minutes",
+  "description": "Build a professional CV that stands out. Our step-by-step process makes it easy to create a CV that highlights your skills and experience.",
+  "startButton": "Start Your CV",
+  "improveButton": "Improve my CV",
+  "uploadHint": "Import your existing CV (Word, PDF)",
+  "features": {
+    "fast": {
+      "title": "Fast & Easy",
+      "description": "Create your CV in minutes with our intuitive process"
+    },
+    "templates": {
+      "title": "Professional Templates",
+      "description": "Choose from our attention-grabbing designs"
+    },
+    "ai": {
+      "title": "AI Analysis",
+      "description": "Our AI analyzes your CV and suggests improvements"
+    }
+  },
+  "testimonials": {
+    "title": "What our users say",
+    "roles": {
+      "developer": "Full Stack Developer",
+      "manager": "Project Manager"
+    },
+    "content1": "An excellent tool that helped me create a professional CV in minutes.",
+    "content2": "Intuitive interface and professional results. Exactly what I needed."
+  },
+  "form": {
+    "personalInfo": {
+      "title": "Personal Information",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "summary": "Professional Summary",
+      "save": "Save"
+    },
+    "workExperience": {
+      "title": "Work Experience",
+      "company": "Company",
+      "position": "Position",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "current": "Current Position",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe your responsibilities and achievements...",
+      "add": "Add Experience"
+    },
+    "education": {
+      "title": "Education",
+      "school": "School / University",
+      "degree": "Degree",
+      "field": "Field of Study",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "current": "Current",
+      "description": "Description",
+      "add": "Add Education"
+    },
+    "skills": {
+      "title": "Skills",
+      "name": "Skill Name",
+      "level": "Proficiency Level",
+      "category": "Category",
+      "addSkill": "Add Skill",
+      "addCategory": "Add Category",
+      "newCategoryPlaceholder": "Add new category",
+      "selectLevel": "Select Level",
+      "selectCategory": "Select Category",
+      "levels": {
+        "beginner": "Beginner",
+        "intermediate": "Intermediate",
+        "advanced": "Advanced",
+        "expert": "Expert"
+      },
+      "defaultCategories": {
+        "technical": "Technical",
+        "softSkills": "Soft Skills",
+        "languages": "Languages",
+        "tools": "Tools"
+      }
+    },
+    "projects": {
+      "title": "Projects",
+      "name": "Project Name",
+      "description": "Project Description",
+      "technologies": "Technologies Used (comma separated)",
+      "link": "Project Link (optional)",
+      "linkPlaceholder": "https://...",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "viewProject": "View Project →",
+      "add": "Add Project"
+    },
+    "references": {
+      "title": "References",
+      "name": "Name",
+      "position": "Position",
+      "company": "Company",
+      "email": "Email",
+      "phone": "Phone",
+      "relationship": "Relationship",
+      "relationshipPlaceholder": "Ex: Former manager, colleague...",
+      "hideForm": "Hide Form",
+      "addReference": "Add Reference",
+      "emailLabel": "Email",
+      "phoneLabel": "Phone",
+      "relationshipLabel": "Relationship",
+      "add": "Add"
+    },
+    "customSection": {
+      "title": "Custom Section",
+      "sectionTitle": "Section Title",
+      "addSection": "Add Section",
+      "content": "Content",
+      "subtitle": "Subtitle",
+      "date": "Date",
+      "addItem": "Add Item",
+      "cancel": "Cancel",
+      "deleteSection": "Delete Section",
+      "enterSectionTitle": "Enter section title",
+      "contentRequired": "Content is required",
+      "titleRequired": "Title is required"
+    },
+    "certifications": {
+      "title": "Certifications",
+      "name": "Certification Name",
+      "issuer": "Issuing Organization",
+      "date": "Issue Date",
+      "expiryDate": "Expiry Date",
+      "credentialId": "Credential ID",
+      "credentialUrl": "Verification URL",
+      "issued": "Issued",
+      "expires": "Expires",
+      "credentialIdLabel": "Credential ID",
+      "verifyCredential": "Verify",
+      "urlPlaceholder": "https://...",
+      "add": "Add Certification"
+    },
+    "validation": {
+      "required": "This field is required",
+      "invalidEmail": "Invalid email",
+      "invalidPhone": "Invalid phone number"
+    },
+    "navigation": {
+      "next": "Next",
+      "previous": "Previous",
+      "finish": "Finish",
+      "preview": "Preview"
+    }
+  }
+}

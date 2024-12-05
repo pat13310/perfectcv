@@ -1,0 +1,16 @@
+{
+  "name": "perfectcv-logger",
+  "version": "1.0.0",
+  "description": "Logger server for PerfectCV",
+  "main": "logService.js",
+  "scripts": {
+    "start": "node logService.js",
+    "dev": "nodemon logService.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.7"
+  }
+}

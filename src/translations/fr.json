@@ -1,0 +1,160 @@
+{
+  "title": "Perfect CV",
+  "home": "Accueil",
+  "assistant": "Assistant",
+  "templates": "Modèles",
+  "preview": "Aperçu",
+  "subtitle": "En Quelques Minutes",
+  "description": "Construisez un CV professionnel qui vous démarque. Notre processus étape par étape vous permet de créer facilement un CV qui met en valeur vos compétences et votre expérience.",
+  "startButton": "Commencer Votre CV",
+  "improveButton": "Améliorer mon CV",
+  "uploadHint": "Importez votre CV existant (Word, PDF)",
+  "features": {
+    "fast": {
+      "title": "Rapide & Facile",
+      "description": "Créez votre CV en quelques minutes avec notre processus intuitif"
+    },
+    "templates": {
+      "title": "Templates Professionnels",
+      "description": "Choisissez parmi nos modèles conçus pour attirer l'attention"
+    },
+    "ai": {
+      "title": "Analyse IA",
+      "description": "Notre IA analyse votre CV et suggère des améliorations"
+    }
+  },
+  "testimonials": {
+    "title": "Ce que disent nos utilisateurs",
+    "roles": {
+      "developer": "Développeur Full Stack",
+      "manager": "Chef de Projet"
+    },
+    "content1": "Un excellent outil qui m'a permis de créer un CV professionnel en quelques minutes.",
+    "content2": "Interface intuitive et résultat professionnel. Exactement ce dont j'avais besoin."
+  },
+  "form": {
+    "personalInfo": {
+      "title": "Informations Personnelles",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Email",
+      "phone": "Téléphone",
+      "address": "Adresse",
+      "summary": "Résumé professionnel",
+      "save": "Enregistrer"
+    },
+    "workExperience": {
+      "title": "Expérience Professionnelle",
+      "company": "Entreprise",
+      "position": "Poste",
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "current": "Poste actuel",
+      "description": "Description",
+      "descriptionPlaceholder": "Décrivez vos responsabilités et réalisations...",
+      "add": "Ajouter une expérience"
+    },
+    "education": {
+      "title": "Formation",
+      "school": "École / Université",
+      "degree": "Diplôme",
+      "field": "Domaine d'études",
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "current": "En cours",
+      "description": "Description",
+      "add": "Ajouter une formation"
+    },
+    "skills": {
+      "title": "Compétences",
+      "name": "Nom de la compétence",
+      "level": "Niveau de maîtrise",
+      "category": "Catégorie",
+      "addSkill": "Ajouter une compétence",
+      "addCategory": "Ajouter une catégorie",
+      "newCategoryPlaceholder": "Ajouter une nouvelle catégorie",
+      "selectLevel": "Sélectionner le niveau",
+      "selectCategory": "Sélectionner la catégorie",
+      "levels": {
+        "beginner": "Débutant",
+        "intermediate": "Intermédiaire",
+        "advanced": "Avancé",
+        "expert": "Expert"
+      },
+      "defaultCategories": {
+        "technical": "Technique",
+        "softSkills": "Compétences générales",
+        "languages": "Langues",
+        "tools": "Outils"
+      }
+    },
+    "projects": {
+      "title": "Projets",
+      "name": "Nom du projet",
+      "description": "Description du projet",
+      "technologies": "Technologies utilisées (séparées par des virgules)",
+      "link": "Lien du projet (optionnel)",
+      "linkPlaceholder": "https://...",
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "viewProject": "Voir le projet →",
+      "add": "Ajouter un projet"
+    },
+    "references": {
+      "title": "Références",
+      "name": "Nom",
+      "position": "Poste",
+      "company": "Entreprise",
+      "email": "Email",
+      "phone": "Téléphone",
+      "relationship": "Relation",
+      "relationshipPlaceholder": "Ex: Ancien manager, collègue...",
+      "hideForm": "Masquer le formulaire",
+      "addReference": "Ajouter une référence",
+      "emailLabel": "Email",
+      "phoneLabel": "Téléphone",
+      "relationshipLabel": "Relation",
+      "add": "Ajouter"
+    },
+    "customSection": {
+      "title": "Section Personnalisée",
+      "sectionTitle": "Titre de la section",
+      "addSection": "Ajouter une section",
+      "content": "Contenu",
+      "subtitle": "Sous-titre",
+      "date": "Date",
+      "addItem": "Ajouter un élément",
+      "cancel": "Annuler",
+      "deleteSection": "Supprimer la section",
+      "enterSectionTitle": "Entrez le titre de la section",
+      "contentRequired": "Le contenu est requis",
+      "titleRequired": "Le titre est requis"
+    },
+    "certifications": {
+      "title": "Certifications",
+      "name": "Nom de la certification",
+      "issuer": "Organisme certificateur",
+      "date": "Date d'obtention",
+      "expiryDate": "Date d'expiration",
+      "credentialId": "ID de la certification",
+      "credentialUrl": "URL de vérification",
+      "issued": "Obtenue le",
+      "expires": "Expire le",
+      "credentialIdLabel": "ID de la certification",
+      "verifyCredential": "Vérifier",
+      "urlPlaceholder": "https://...",
+      "add": "Ajouter une certification"
+    },
+    "validation": {
+      "required": "Ce champ est requis",
+      "invalidEmail": "Email invalide",
+      "invalidPhone": "Numéro de téléphone invalide"
+    },
+    "navigation": {
+      "next": "Suivant",
+      "previous": "Précédent",
+      "finish": "Terminé",
+      "preview": "Aperçu"
+    }
+  }
+}
