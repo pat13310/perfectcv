@@ -41,7 +41,9 @@
       "phone": "Téléphone",
       "address": "Adresse",
       "summary": "Résumé professionnel",
-      "save": "Enregistrer"
+      "save": "Enregistrer",
+      "location": "Adresse",
+      "name": "Nom"
     },
     "workExperience": {
       "title": "Expérience Professionnelle",
@@ -52,21 +54,25 @@
       "current": "Poste actuel",
       "description": "Description",
       "descriptionPlaceholder": "Décrivez vos responsabilités et réalisations...",
-      "add": "Ajouter une expérience"
+      "add": "Ajouter une expérience",
+      "at": "chez"
     },
     "education": {
       "title": "Formation",
-      "school": "École / Université",
+      "school": "École",
       "degree": "Diplôme",
       "field": "Domaine d'études",
-      "startDate": "Date de début",
-      "endDate": "Date de fin",
+      "dates": "Dates",
       "current": "En cours",
       "description": "Description",
-      "add": "Ajouter une formation"
+      "descriptionPlaceholder": "Décrivez votre formation...",
+      "add": "Ajouter une formation",
+      "at": "à"
     },
     "skills": {
       "title": "Compétences",
+      "technical": "Compétences Techniques",
+      "soft": "Compétences Personnelles",
       "name": "Nom de la compétence",
       "level": "Niveau de maîtrise",
       "category": "Catégorie",
@@ -156,5 +162,12 @@
       "finish": "Terminé",
       "preview": "Aperçu"
     }
+  },
+  "parseResult": {
+    "title": "Résultats de l'analyse du CV"
+  },
+  "common": {
+    "edit": "Modifier",
+    "back": "Retour"
   }
 }

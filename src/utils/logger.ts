@@ -7,6 +7,13 @@ interface LogMessage {
     data?: any;
 }
 
+import * as fsType from 'fs';
+
+let fs: typeof fsType | null = null;
+if (typeof window === 'undefined') {
+    fs = require('fs');
+}
+
 class Logger {
     private static instance: Logger;
     private logs: LogMessage[] = [];
@@ -22,37 +29,20 @@ class Logger {
     private async initLogFile() {
         try {
             // Vérifier si le dossier logs existe, sinon le créer
-            if (typeof process !== 'undefined' && process.versions && process.versions.node) {
-                const fs = require('fs');
+            if (fs) {
                 if (!fs.existsSync('logs')) {
                     fs.mkdirSync('logs');
                 }
-            } else if (typeof window !== 'undefined' && (window as any).fs) {
-                if (!(window as any).fs.existsSync('logs')) {
-                    (window as any).fs.mkdirSync('logs');
-                }
-            }
 
-            this.logFile = 'logs/app.log';
+                this.logFile = 'logs/app.log';
 
-            // Vérifier la taille du fichier de log
-            if (typeof process !== 'undefined' && process.versions && process.versions.node) {
-                const fs = require('fs');
+                // Vérifier la taille du fichier de log
                 if (fs.existsSync(this.logFile)) {
                     const stats = fs.statSync(this.logFile);
                     if (stats.size > this.maxLogSize) {
                         // Renommer l'ancien fichier avec un timestamp
                         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
                         fs.renameSync(this.logFile, `logs/app-${timestamp}.log`);
-                    }
-                }
-            } else if (typeof window !== 'undefined' && (window as any).fs) {
-                if ((window as any).fs.existsSync(this.logFile)) {
-                    const stats = (window as any).fs.statSync(this.logFile);
-                    if (stats.size > this.maxLogSize) {
-                        // Renommer l'ancien fichier avec un timestamp
-                        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-                        (window as any).fs.renameSync(this.logFile, `logs/app-${timestamp}.log`);
                     }
                 }
             }
@@ -92,11 +82,11 @@ class Logger {
             }\n`;
 
             // Check if running in Node.js environment
-            if (typeof window !== 'undefined' && (window as any).require) {
+            if (fs && fs.promises) {
+                const fsPromises = fs.promises;
+                await fsPromises.appendFile(this.logFile, formattedMessage);
+            } else if (typeof window !== 'undefined' && (window as any).require) {
                 const fs = (window as any).require('fs').promises;
-                await fs.appendFile(this.logFile, formattedMessage);
-            } else if (typeof process !== 'undefined' && process.versions && process.versions.node) {
-                const fs = require('fs').promises;
                 await fs.appendFile(this.logFile, formattedMessage);
             } else {
                 // Fallback for browser environments

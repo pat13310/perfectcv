@@ -1,15 +1,19 @@
 import { getDocument } from 'pdfjs-dist';
+import type { TextItem } from 'pdfjs-dist/types/src/display/api';
 import mammoth from 'mammoth';
 import { fileTypeFromBlob } from 'file-type';
 import { CVData } from '../context/CVContext';
 import { initPdfWorker } from '../utils/pdfjs-worker';
 import { logger } from '../utils/logger';
+import { GPTService } from './GPTService';
 
 // Initialize PDF.js worker
 initPdfWorker();
 
 export interface ParsingError extends Error {
+  name: string;
   code: 'FILE_TYPE' | 'EXTRACTION' | 'PARSING';
+  message: string;
   details?: any;
 }
 
@@ -27,14 +31,6 @@ export interface ParsingResult {
 export class CVParser {
   private static readonly SUPPORTED_MIME_TYPES = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
   private static readonly MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-
-  private static createError(message: string, code: ParsingError['code'], details?: any): ParsingError {
-    logger.error('[CVParser] Erreur de parsing', { message, code, details });
-    const error = new Error(message) as ParsingError;
-    error.code = code;
-    error.details = details;
-    return error;
-  }
 
   /**
    * Vérifie si le fichier est valide
@@ -86,7 +82,11 @@ export class CVParser {
    */
   private static async extractTextFromPDF(file: File): Promise<string> {
     try {
-      logger.info('[CVParser] Début de l\'extraction du texte PDF', { name: file.name });
+      logger.info('[CVParser] Début de l\'extraction du texte PDF', { 
+        fileName: file.name,
+        fileSize: file.size 
+      });
+
       const arrayBuffer = await file.arrayBuffer();
       const pdf = await getDocument({ data: arrayBuffer }).promise;
       let fullText = '';
@@ -97,19 +97,47 @@ export class CVParser {
         logger.debug(`[CVParser] Traitement de la page PDF ${i}/${pdf.numPages}`);
         const page = await pdf.getPage(i);
         const textContent = await page.getTextContent();
+        
+        logger.debug('[CVParser] Contenu de la page récupéré', {
+          itemCount: textContent.items.length,
+          firstItem: textContent.items[0] && 'str' in textContent.items[0] 
+            ? textContent.items[0].str 
+            : 'No items'
+        });
+
+        // Simple text extraction for debugging
         const pageText = textContent.items
-          .map((item: any) => item.str)
+          .filter((item): item is TextItem => 'str' in item) // Type guard to ensure we only get TextItems
+          .map(item => item.str)
           .join(' ');
+
         fullText += pageText + '\n';
+
+        logger.debug('[CVParser] Page traitée', {
+          pageNumber: i,
+          textLength: pageText.length,
+          preview: pageText.substring(0, 100)
+        });
       }
+      
+      // Basic text cleaning
+      fullText = fullText
+        .replace(/\s+/g, ' ')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
       
       logger.info('[CVParser] Extraction du texte PDF terminée', { 
         textLength: fullText.length,
-        previewStart: fullText.substring(0, 100) 
+        previewStart: fullText.substring(0, 100)
       });
       
       return fullText;
     } catch (error) {
+      logger.error('[CVParser] Erreur lors de l\'extraction du texte PDF', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        fileName: file.name
+      });
       throw this.createError(
         'Impossible d\'extraire le texte du PDF',
         'EXTRACTION',
@@ -164,6 +192,17 @@ export class CVParser {
   }
 
   /**
+   * Méthode statique pour analyser un CV avec GPT
+   * @param text Le texte du CV à analyser
+   * @param language La langue du CV
+   * @returns Une analyse partielle des données du CV
+   */
+  static async analyzeCVWithGPT(text: string, language: 'fr' | 'en'): Promise<Partial<CVData>> {
+    const gptService = new GPTService();
+    return await gptService.analyzeCV(text, language);
+  }
+
+  /**
    * Parse le fichier pour extraire les données du CV
    */
   public static async parseCV(
@@ -181,52 +220,37 @@ export class CVParser {
       onProgress?.({ stage: 'FILE_TYPE', progress: 25 });
 
       // Détection du type de fichier
-      const mimeType = await this.getFileType(file);
+      const fileType = await this.getFileType(file);
       onProgress?.({ stage: 'EXTRACTION', progress: 50 });
 
       // Extraction du texte
-      logger.info('[CVParser] Début de l\'extraction du texte', { mimeType });
-      let text = '';
-      if (mimeType === 'application/pdf') {
-        text = await this.extractTextFromPDF(file);
-      } else {
-        text = await this.extractTextFromDOCX(file);
+      logger.info('[CVParser] Début de l\'extraction du texte', { mimeType: fileType });
+      let extractedText = '';
+      if (fileType === 'application/pdf') {
+        extractedText = await this.extractTextFromPDF(file);
+      } else if (fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+        extractedText = await this.extractTextFromDOCX(file);
       }
 
       onProgress?.({ stage: 'ANALYSIS', progress: 75 });
 
-      // Analyse du contenu
-      logger.info('[CVParser] Début de l\'analyse du contenu');
-      const language = this.detectLanguage(text);
-      const data: Partial<CVData> = {
-        personalInfo: this.extractPersonalInfo(text),
-        workExperience: this.extractWorkExperience(text),
-        education: this.extractEducation(text),
-        skills: this.extractSkills(text),
-        projects: this.extractProjects(text),
-      };
+      // Détecte la langue du texte
+      const detectedLanguage = this.detectLanguage(extractedText);
 
-      logger.info('[CVParser] Analyse du contenu terminée', {
-        language,
-        sections: {
-          personalInfo: !!data.personalInfo,
-          workExperience: data.workExperience?.length || 0,
-          education: data.education?.length || 0,
-          skills: data.skills?.length || 0,
-          projects: data.projects?.length || 0
-        }
-      });
+      // Use GPT to analyze the extracted text
+      const gptAnalysis = await CVParser.analyzeCVWithGPT(extractedText, detectedLanguage);
 
-      const suggestions = this.generateSuggestions(data, language);
-      logger.info('[CVParser] Suggestions générées', { 
-        suggestionsCount: Object.values(suggestions)
-          .reduce((acc, curr) => acc + curr.length, 0)
-      });
+      if (onProgress) {
+        onProgress({ stage: 'ANALYSIS', progress: 90 });
+      }
+
+      // Génère des suggestions d'amélioration pour les sections du CV
+      const suggestions = this.generateSuggestions(gptAnalysis, detectedLanguage);
 
       onProgress?.({ stage: 'COMPLETE', progress: 100 });
 
       logger.info('[CVParser] Parsing du CV terminé avec succès');
-      return { data, language, suggestions };
+      return { data: gptAnalysis, language: detectedLanguage, suggestions };
     } catch (error) {
       if ((error as ParsingError).code) throw error;
       throw this.createError(
@@ -622,6 +646,26 @@ export class CVParser {
   }
 
   /**
+   * Creates a standardized parsing error
+   * @param message Error message
+   * @param code Error code
+   * @param details Additional error details
+   * @returns ParsingError
+   */
+  private static createError(
+    message: string, 
+    code: ParsingError['code'], 
+    details?: any
+  ): ParsingError {
+    return {
+      name: 'ParsingError',
+      message,
+      code,
+      details
+    };
+  }
+
+  /**
    * Génère des suggestions d'amélioration pour les sections du CV
    */
   private static generateSuggestions(data: Partial<CVData>, language: 'fr' | 'en'): Record<keyof CVData, string[]> {
@@ -631,6 +675,7 @@ export class CVParser {
       education: [],
       skills: [],
       projects: [],
+      languages: [],
       certifications: [],
       references: [],
       customSections: [],

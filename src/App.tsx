@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { CVProvider } from './context/CVContext';
 import { LanguageProvider } from './context/LanguageContext';
 import Home from './components/Home/Home';
@@ -17,6 +17,13 @@ import CustomSection from './components/CVForm/CustomSection';
 import FormNavigation from './components/Navigation/FormNavigation';
 import { useCV } from './context/CVContext';
 import ImproveCv from './components/Improve/ImproveCv';
+import ParseResult from './pages/ParseResult';
+
+const ParseResultPage = () => {
+  const location = useLocation();
+  const data = location.state?.data;
+  return <ParseResult data={data} />;
+};
 
 function App() {
   
@@ -83,6 +90,7 @@ function App() {
                   <CVPreview />
                 } />
                 <Route path="/cv-form" element={<Navigate to="/cv-form/personal-info" replace />} />
+                <Route path="/parse-result" element={<ParseResultPage />} />
               </Routes>
             </div>
           </div>

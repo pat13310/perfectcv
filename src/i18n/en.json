@@ -1,0 +1,15 @@
+{
+  "parser": {
+    "results": {
+      "title": "Elements identified in your CV",
+      "personalInfo": "Personal Information",
+      "workExperience": "Work Experience",
+      "education": "Education",
+      "skills": "Skills",
+      "projects": "Projects"
+    }
+  },
+  "common": {
+    "continue": "Continue"
+  }
+}

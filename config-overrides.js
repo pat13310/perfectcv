@@ -1,41 +1,39 @@
 const webpack = require('webpack');
 const path = require('path');
+const dotenv = require('dotenv');
 
 module.exports = function override(config) {
-  // Fallback pour les modules Node.js
-  config.resolve.fallback = {
-    ...config.resolve.fallback,
-    "fs": false,
-    "path": require.resolve("path-browserify"),
-    "stream": require.resolve("stream-browserify"),
-    "buffer": require.resolve("buffer/"),
-    "util": require.resolve("util/"),
-    "url": require.resolve("url/"),
-    "http": require.resolve("stream-http"),
-    "https": require.resolve("https-browserify"),
-    "zlib": require.resolve("browserify-zlib"),
-    "assert": require.resolve("assert/"),
-    "crypto": require.resolve("crypto-browserify"),
+  // Load environment variables from .env file
+  const env = dotenv.config().parsed || {};
+  
+  // Prepare environment variables for webpack
+  const envKeys = Object.keys(env).reduce((prev, next) => {
+    prev[`process.env.${next}`] = JSON.stringify(env[next]);
+    return prev;
+  }, {});
+
+  // Find and remove any existing DefinePlugin instances
+  config.plugins = config.plugins.filter(plugin => 
+    !(plugin instanceof webpack.DefinePlugin)
+  );
+
+  // Use fallback to provide an empty module for fs
+  config.resolve = {
+    ...config.resolve,
+    fallback: {
+      ...config.resolve.fallback,
+      fs: false,
+    },
   };
 
-  // Configure PDF.js worker
-  config.resolve.alias = {
-    ...config.resolve.alias,
-    'pdfjs-dist': path.resolve(__dirname, './node_modules/pdfjs-dist/build/pdf'),
-  };
-
-  // Add necessary plugins
-  config.plugins = [
-    ...config.plugins,
-    new webpack.ProvidePlugin({
-      Buffer: ['buffer', 'Buffer'],
-    }),
+  // Add our DefinePlugin with combined environment variables
+  config.plugins.push(
     new webpack.DefinePlugin({
+      ...envKeys,
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-      'process.env.REACT_APP_PDFJS_VERSION': JSON.stringify(process.env.REACT_APP_PDFJS_VERSION),
       'process.browser': true,
-    }),
-  ];
+    })
+  );
 
   return config;
-}
+};

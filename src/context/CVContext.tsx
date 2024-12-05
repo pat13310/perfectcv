@@ -52,6 +52,10 @@ export interface CVData {
     endDate: string;
     link?: string;
   }>;
+  languages: Array<{
+    name: string;
+    level: string;
+  }>;
   certifications: Array<{
     name: string;
     issuer: string;
@@ -87,6 +91,9 @@ interface CVContextType {
   addProject: (project: CVData['projects'][0]) => void;
   updateProject: (index: number, project: CVData['projects'][0]) => void;
   removeProject: (index: number) => void;
+  addLanguage: (language: CVData['languages'][0]) => void;
+  updateLanguage: (index: number, language: CVData['languages'][0]) => void;
+  removeLanguage: (index: number) => void;
   addCertification: (cert: CVData['certifications'][0]) => void;
   updateCertification: (index: number, cert: CVData['certifications'][0]) => void;
   removeCertification: (index: number) => void;
@@ -115,6 +122,7 @@ const initialState: CVData = {
   education: [],
   skills: [],
   projects: [],
+  languages: [],
   certifications: [],
   references: [],
   customSections: [],
@@ -136,6 +144,9 @@ type CVAction =
   | { type: 'ADD_PROJECT'; payload: CVData['projects'][0] }
   | { type: 'UPDATE_PROJECT'; payload: { index: number; project: CVData['projects'][0] } }
   | { type: 'REMOVE_PROJECT'; payload: number }
+  | { type: 'ADD_LANGUAGE'; payload: CVData['languages'][0] }
+  | { type: 'UPDATE_LANGUAGE'; payload: { index: number; language: CVData['languages'][0] } }
+  | { type: 'REMOVE_LANGUAGE'; payload: number }
   | { type: 'ADD_CERTIFICATION'; payload: CVData['certifications'][0] }
   | { type: 'UPDATE_CERTIFICATION'; payload: { index: number; cert: CVData['certifications'][0] } }
   | { type: 'REMOVE_CERTIFICATION'; payload: number }
@@ -211,6 +222,20 @@ function cvReducer(state: CVData, action: CVAction): CVData {
       return {
         ...state,
         projects: state.projects.filter((_, i) => i !== action.payload),
+      };
+    case 'ADD_LANGUAGE':
+      return { ...state, languages: [...state.languages, action.payload] };
+    case 'UPDATE_LANGUAGE':
+      return {
+        ...state,
+        languages: state.languages.map((language, i) =>
+          i === action.payload.index ? action.payload.language : language
+        ),
+      };
+    case 'REMOVE_LANGUAGE':
+      return {
+        ...state,
+        languages: state.languages.filter((_, i) => i !== action.payload),
       };
     case 'ADD_CERTIFICATION':
       return { ...state, certifications: [...state.certifications, action.payload] };
@@ -377,6 +402,18 @@ export const CVProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     dispatch({ type: 'REMOVE_PROJECT', payload: index });
   };
 
+  const addLanguage = (language: CVData['languages'][0]) => {
+    dispatch({ type: 'ADD_LANGUAGE', payload: language });
+  };
+
+  const updateLanguage = (index: number, language: CVData['languages'][0]) => {
+    dispatch({ type: 'UPDATE_LANGUAGE', payload: { index, language } });
+  };
+
+  const removeLanguage = (index: number) => {
+    dispatch({ type: 'REMOVE_LANGUAGE', payload: index });
+  };
+
   const addCertification = (cert: CVData['certifications'][0]) => {
     dispatch({ type: 'ADD_CERTIFICATION', payload: cert });
   };
@@ -470,6 +507,9 @@ export const CVProvider: React.FC<{ children: React.ReactNode }> = ({ children }
         addProject,
         updateProject,
         removeProject,
+        addLanguage,
+        updateLanguage,
+        removeLanguage,
         addCertification,
         updateCertification,
         removeCertification,

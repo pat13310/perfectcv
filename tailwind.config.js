@@ -2,6 +2,7 @@
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
+    "./public/index.html"
   ],
   theme: {
     extend: {
@@ -20,26 +21,34 @@ module.exports = {
           '50%': {
             'background-size': '200% 200%',
             'background-position': 'right center'
-          },
+          }
         },
         'fade-in': {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
+          '0%': {
+            opacity: '0'
+          },
+          '100%': {
+            opacity: '1'
+          }
         },
         'fade-in-up': {
           '0%': {
             opacity: '0',
-            transform: 'translateY(20px)'
+            transform: 'translateY(10px)'
           },
           '100%': {
             opacity: '1',
             transform: 'translateY(0)'
-          },
+          }
         },
         'scale': {
-          '0%': { transform: 'scale(1)' },
-          '100%': { transform: 'scale(1.05)' },
-        },
+          '0%': {
+            transform: 'scale(0.95)'
+          },
+          '100%': {
+            transform: 'scale(1)'
+          }
+        }
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
