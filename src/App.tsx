@@ -26,14 +26,14 @@ const ParseResultPage = () => {
 };
 
 function App() {
-  
+
   return (
     <LanguageProvider>
       <Router>
         <CVProvider>
           <div className="min-h-screen bg-gray-50">
             <Header />
-            <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto py-2 sm:px-6 lg:px-8">
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/improve-cv" element={<ImproveCv />} />
@@ -89,8 +89,12 @@ function App() {
                 <Route path="/cv-form/preview" element={
                   <CVPreview />
                 } />
-                <Route path="/cv-form" element={<Navigate to="/cv-form/personal-info" replace />} />
-                <Route path="/parse-result" element={<ParseResultPage />} />
+                <Route path="/cv-form" element={
+                  <Navigate to="/cv-form/personal-info" replace />
+                } />
+                <Route path="/parse-result" element={
+                  <ParseResultPage />
+                } />
               </Routes>
             </div>
           </div>
@@ -102,10 +106,10 @@ function App() {
 
 function PreviewPage() {
   const { cvData } = useCV();
-  
+
   return (
     <div className="relative min-h-screen pb-20">
-      
+
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t">
         <div className="container mx-auto px-4">
           <FormNavigation />

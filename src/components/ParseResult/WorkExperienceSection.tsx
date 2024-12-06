@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { BriefcaseIcon } from '@heroicons/react/24/solid';
@@ -22,16 +22,16 @@ const WorkExperienceItem: React.FC<WorkExperience> = ({ position, company, dates
 
     return (
         <li className="bg-white rounded-lg p-3 shadow-sm">
-            <div className="font-semibold text-base text-gray-900">
+            <div className="font-medium text-base text-gray-900/80">
                 {position && <span>{position}</span>}
                 {company && <span> {t('form.workExperience.at')} {company}</span>}
             </div>
-            <div className="text-gray-700 text-sm">
+            <div className="text-medium text-gray-700/85 text-sm">
                 {dates && <span>{dates}</span>}
             </div>
-            <ul className="list-disc list-inside mt-2 text-sm text-gray-800">
+            <ul className="list-disc list-inside mt-2 text-sm text-gray-800/90">
                 {responsibilities?.map((resp, i) => (
-                    <li key={i} className="text-gray-800">{resp}</li>
+                    <li key={i} className="text-gray-800/95">{resp}</li>
                 ))}
             </ul>
         </li>
@@ -40,6 +40,7 @@ const WorkExperienceItem: React.FC<WorkExperience> = ({ position, company, dates
 
 const WorkExperienceSection: React.FC<WorkExperienceSectionProps> = ({ data, isExpanded, onToggle }) => {
     const { t } = useTranslation();
+    const nodeRef = useRef(null);
 
     return (
         <div className="mb-6">
@@ -47,9 +48,11 @@ const WorkExperienceSection: React.FC<WorkExperienceSectionProps> = ({ data, isE
                 className="flex items-center justify-between mb-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors duration-200"
                 onClick={onToggle}
             >
-                <div className="flex items-center gap-2">
-                    <BriefcaseIcon className="h-6 w-6 text-blue-600" />
-                    <h2 className="text-xl font-bold text-gray-800">{t('form.workExperience.title')}</h2>
+                <div className="flex items-center gap-3">
+                    <div className="flex -space-x-1">
+                        <BriefcaseIcon className="h-6 w-6 text-purple-700/85" />
+                    </div>
+                    <h2 className="text-xl font-medium text-gray-700">{t('form.workExperience.title')}</h2>
                 </div>
                 {isExpanded ? (
                     <ChevronDownIcon className="h-5 w-5 text-gray-500" />
@@ -62,12 +65,15 @@ const WorkExperienceSection: React.FC<WorkExperienceSectionProps> = ({ data, isE
                 timeout={500}
                 classNames="work-experience"
                 unmountOnExit
+                nodeRef={nodeRef}
             >
-                <ul className="space-y-3">
-                    {data.map((item, index) => (
-                        <WorkExperienceItem key={index} {...item} />
-                    ))}
-                </ul>
+                <div ref={nodeRef} className="px-4 pb-4">
+                    <ul className="space-y-3">
+                        {data.map((item, index) => (
+                            <WorkExperienceItem key={index} {...item} />
+                        ))}
+                    </ul>
+                </div>
             </CSSTransition>
             <style>
                 {`

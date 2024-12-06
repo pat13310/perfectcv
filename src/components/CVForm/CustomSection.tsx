@@ -120,7 +120,7 @@ const CustomSection: React.FC = () => {
 
   return (
     <div className="bg-white shadow-md rounded-lg p-4 mb-6">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">{t.title}</h2>
+      <h2 className="text-2xl font-medium text-gray-800/90 mb-6">{t.title}</h2>
 
       {/* Add new section */}
       <div className="flex space-x-2 mb-6">

@@ -15,7 +15,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({ onEdit }) => {
     return (
         <div>
             <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-medium text-gray-700">
+                <h1 className="text-3xl font-normal text-gray-700/90">
                     {t('parseResult.title')}
                 </h1>
                 <div className="flex space-x-4">

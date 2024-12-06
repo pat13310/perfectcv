@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
-import { WrenchScrewdriverIcon, SparklesIcon } from '@heroicons/react/24/solid';
+import { WrenchScrewdriverIcon, LightBulbIcon } from '@heroicons/react/24/solid';
 import { CSSTransition } from 'react-transition-group';
 
 interface Skill {
@@ -27,6 +27,7 @@ const SkillItem: React.FC<Skill> = ({ name }) => (
 
 const SkillsSection: React.FC<SkillsSectionProps> = ({ skills = [], isExpanded, onToggle, category }) => {
     const { t } = useTranslation();
+    const nodeRef = useRef(null);
 
     useEffect(() => {
         console.log(`SkillsSection - Received skills for ${category}:`, skills);
@@ -62,15 +63,13 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({ skills = [], isExpanded, 
                 className="flex items-center justify-between mb-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors duration-200"
                 onClick={onToggle}
             >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                     {category === 'technical' ? (
-                        <WrenchScrewdriverIcon className="h-6 w-6 text-blue-600" />
+                        <WrenchScrewdriverIcon className="h-6 w-6 text-purple-700/85" />
                     ) : (
-                        <SparklesIcon className="h-6 w-6 text-blue-600" />
+                        <LightBulbIcon className="h-6 w-6 text-purple-700/85" />
                     )}
-                    <h2 className="text-xl font-medium text-gray-700">
-                        {t(`form.skills.${category}`)}
-                    </h2>
+                    <h2 className="text-xl font-medium text-gray-700">{t(`form.skills.${category}`)}</h2>
                 </div>
                 {isExpanded ? (
                     <ChevronDownIcon className="h-5 w-5 text-gray-500 transition-transform duration-300 ease-in-out" />
@@ -80,14 +79,20 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({ skills = [], isExpanded, 
             </div>
             <CSSTransition
                 in={isExpanded}
-                timeout={500}
+                timeout={200}
                 classNames="skills"
                 unmountOnExit
+                nodeRef={nodeRef}
             >
-                <div className="bg-white rounded-lg p-3">
+                <div ref={nodeRef} className="px-4 pb-4 bg-white rounded-lg p-3">
                     <div className="flex flex-wrap gap-2">
                         {filteredSkills.map((skill, index) => (
-                            <SkillItem key={index} {...skill} />
+                            <span
+                                key={index}
+                                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800/90"
+                            >
+                                {skill.name}
+                            </span>
                         ))}
                     </div>
                 </div>

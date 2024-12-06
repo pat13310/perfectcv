@@ -58,7 +58,7 @@ const Education: React.FC = () => {
 
   return (
     <div className="bg-white shadow-md rounded-lg p-4 mb-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">{t.title}</h2>
+      <h2 className="text-2xl font-medium text-gray-800/90 mb-6">{t.title}</h2>
       
       {/* Existing education list */}
       {educations.length > 0 && (

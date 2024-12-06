@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { UserCircleIcon } from '@heroicons/react/24/solid';
@@ -19,43 +19,64 @@ interface PersonalInfoSectionProps {
 
 const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ data, isExpanded, onToggle }) => {
     const { t } = useTranslation();
+    const nodeRef = useRef(null);
 
     return (
-        <div className="mb-6">
+        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
             <div
-                className="flex items-center justify-between mb-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors duration-200"
+                className="p-4 cursor-pointer"
                 onClick={onToggle}
             >
-                <div className="flex items-center gap-2">
-                    <UserCircleIcon className="h-6 w-6 text-blue-600" />
+                <div className="flex items-center gap-3">
+                    <div className="flex -space-x-1">
+                        <UserCircleIcon className="h-6 w-6 text-purple-700/85" />
+                    </div>
                     <h2 className="text-xl font-medium text-gray-700">{t('form.personalInfo.title')}</h2>
                 </div>
-                {isExpanded ? (
-                    <ChevronDownIcon className="h-5 w-5 text-gray-500" />
-                ) : (
-                    <ChevronRightIcon className="h-5 w-5 text-gray-500" />
-                )}
+                <div className="flex justify-between items-center">
+                    <div className="flex-grow" />
+                    {isExpanded ? (
+                        <ChevronDownIcon className="h-5 w-5 text-gray-500" />
+                    ) : (
+                        <ChevronRightIcon className="h-5 w-5 text-gray-500" />
+                    )}
+                </div>
             </div>
+
             <CSSTransition
                 in={isExpanded}
-                timeout={500}
+                timeout={200}
                 classNames="personal-info"
                 unmountOnExit
+                nodeRef={nodeRef}
             >
-                <div className="grid grid-cols-1 md:grid-cols-1 gap-2 mt-4">
-                    {Object.entries(data).map(([key, value]) => {
-                        if (!value || (Array.isArray(value) && value.length === 0)) return null;
-                        return (
-                            <div key={key} className="bg-white text-sm flex items-center justify-start p-2 ">
-                                <div className="font-medium text-gray-800 capitalize">
-                                    {t(`form.personalInfo.${key}`)}
-                                </div>
-                                <div className="ml-2 font-normal text-gray-00">
-                                    {Array.isArray(value) ? value.join(', ') : value}
-                                </div>
+                <div ref={nodeRef} className="px-4 pb-4">
+                    <div className="space-y-2">
+                        {data.name && (
+                            <div className="text-gray-800/90">
+                                <span className="font-medium">{t('form.personalInfo.name')}: </span>
+                                {data.name}
                             </div>
-                        );
-                    })}
+                        )}
+                        {data.email && (
+                            <div className="text-gray-800/90">
+                                <span className="font-medium">{t('form.personalInfo.email')}: </span>
+                                {data.email}
+                            </div>
+                        )}
+                        {data.phone && (
+                            <div className="text-gray-800/90">
+                                <span className="font-medium">{t('form.personalInfo.phone')}: </span>
+                                {data.phone}
+                            </div>
+                        )}
+                        {data.location && (
+                            <div className="text-gray-800/90">
+                                <span className="font-medium">{t('form.personalInfo.location')}: </span>
+                                {data.location}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </CSSTransition>
             <style>
@@ -69,7 +90,7 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ data, isExpan
                     opacity: 1;
                     transform: translateY(0);
                     max-height: 2000px;
-                    transition: opacity 300ms ease-in-out, transform 300ms ease-in-out, max-height 500ms ease-in-out;
+                    transition: opacity 200ms ease-in-out, transform 200ms ease-in-out, max-height 200ms ease-in-out;
                 }
                 .personal-info-exit {
                     opacity: 1;
@@ -80,7 +101,7 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ data, isExpan
                     opacity: 0;
                     transform: translateY(-10px);
                     max-height: 0;
-                    transition: opacity 300ms ease-in-out, transform 300ms ease-in-out, max-height 500ms ease-in-out;
+                    transition: opacity 200ms ease-in-out, transform 200ms ease-in-out, max-height 200ms ease-in-out;
                 }
                 `}
             </style>

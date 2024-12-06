@@ -54,7 +54,7 @@ const WorkExperience: React.FC = () => {
 
   return (
     <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">{t.title}</h2>
+      <h2 className="text-2xl font-medium text-gray-800/90 mb-6">{t.title}</h2>
       
       {/* Existing experiences list */}
       {experiences.length > 0 && (
