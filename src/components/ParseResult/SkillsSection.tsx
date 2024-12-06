@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { WrenchScrewdriverIcon, SparklesIcon } from '@heroicons/react/24/solid';
+import { CSSTransition } from 'react-transition-group';
 
 interface Skill {
     name?: string;
@@ -15,6 +16,14 @@ interface SkillsSectionProps {
     onToggle: () => void;
     category: 'technical' | 'soft';
 }
+
+const SkillItem: React.FC<Skill> = ({ name }) => (
+    <div className="flex flex-col">
+        <span className="inline-block px-2 py-1 bg-gray-100 rounded-full text-gray-700 text-sm">
+            {name}
+        </span>
+    </div>
+);
 
 const SkillsSection: React.FC<SkillsSectionProps> = ({ skills = [], isExpanded, onToggle, category }) => {
     const { t } = useTranslation();
@@ -64,25 +73,51 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({ skills = [], isExpanded, 
                     </h2>
                 </div>
                 {isExpanded ? (
-                    <ChevronDownIcon className="h-5 w-5 text-gray-500" />
+                    <ChevronDownIcon className="h-5 w-5 text-gray-500 transition-transform duration-300 ease-in-out" />
                 ) : (
-                    <ChevronRightIcon className="h-5 w-5 text-gray-500" />
+                    <ChevronRightIcon className="h-5 w-5 text-gray-500 transition-transform duration-300 ease-in-out" />
                 )}
             </div>
-            {isExpanded && (
+            <CSSTransition
+                in={isExpanded}
+                timeout={500}
+                classNames="skills"
+                unmountOnExit
+            >
                 <div className="bg-white rounded-lg p-3">
                     <div className="flex flex-wrap gap-2">
                         {filteredSkills.map((skill, index) => (
-                            <div key={index} className="flex flex-col">
-                                <span className="inline-block px-2 py-1 bg-gray-100 rounded-full text-gray-700 text-sm">
-                                    {skill.name}
-                                </span>
-
-                            </div>
+                            <SkillItem key={index} {...skill} />
                         ))}
                     </div>
                 </div>
-            )}
+            </CSSTransition>
+            <style>
+                {`
+                .skills-enter {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                    max-height: 0;
+                }
+                .skills-enter-active {
+                    opacity: 1;
+                    transform: translateY(0);
+                    max-height: 1000px;
+                    transition: opacity 300ms ease-in-out, transform 300ms ease-in-out, max-height 500ms ease-in-out;
+                }
+                .skills-exit {
+                    opacity: 1;
+                    transform: translateY(0);
+                    max-height: 1000px;
+                }
+                .skills-exit-active {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                    max-height: 0;
+                    transition: opacity 300ms ease-in-out, transform 300ms ease-in-out, max-height 500ms ease-in-out;
+                }
+                `}
+            </style>
         </div>
     );
 };

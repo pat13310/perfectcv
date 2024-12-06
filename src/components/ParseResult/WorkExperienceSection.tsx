@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { BriefcaseIcon } from '@heroicons/react/24/solid';
+import { CSSTransition } from 'react-transition-group';
 
 interface WorkExperience {
     position?: string;
@@ -16,6 +17,27 @@ interface WorkExperienceSectionProps {
     onToggle: () => void;
 }
 
+const WorkExperienceItem: React.FC<WorkExperience> = ({ position, company, dates, responsibilities }) => {
+    const { t } = useTranslation();
+
+    return (
+        <li className="bg-white rounded-lg p-3 shadow-sm">
+            <div className="font-semibold text-base text-gray-900">
+                {position && <span>{position}</span>}
+                {company && <span> {t('form.workExperience.at')} {company}</span>}
+            </div>
+            <div className="text-gray-700 text-sm">
+                {dates && <span>{dates}</span>}
+            </div>
+            <ul className="list-disc list-inside mt-2 text-sm text-gray-800">
+                {responsibilities?.map((resp, i) => (
+                    <li key={i} className="text-gray-800">{resp}</li>
+                ))}
+            </ul>
+        </li>
+    );
+};
+
 const WorkExperienceSection: React.FC<WorkExperienceSectionProps> = ({ data, isExpanded, onToggle }) => {
     const { t } = useTranslation();
 
@@ -27,7 +49,7 @@ const WorkExperienceSection: React.FC<WorkExperienceSectionProps> = ({ data, isE
             >
                 <div className="flex items-center gap-2">
                     <BriefcaseIcon className="h-6 w-6 text-blue-600" />
-                    <h2 className="text-xl font-medium text-gray-700">{t('form.workExperience.title')}</h2>
+                    <h2 className="text-xl font-bold text-gray-800">{t('form.workExperience.title')}</h2>
                 </div>
                 {isExpanded ? (
                     <ChevronDownIcon className="h-5 w-5 text-gray-500" />
@@ -35,26 +57,44 @@ const WorkExperienceSection: React.FC<WorkExperienceSectionProps> = ({ data, isE
                     <ChevronRightIcon className="h-5 w-5 text-gray-500" />
                 )}
             </div>
-            {isExpanded && (
+            <CSSTransition
+                in={isExpanded}
+                timeout={500}
+                classNames="work-experience"
+                unmountOnExit
+            >
                 <ul className="space-y-3">
                     {data.map((item, index) => (
-                        <li key={index} className="bg-white rounded-lg p-3 shadow-sm">
-                            <div className="font-medium text-base text-gray-900">
-                                {item.position && <span>{item.position}</span>}
-                                {item.company && <span> {t('form.workExperience.at')} {item.company}</span>}
-                            </div>
-                            <div className="text-gray-600 text-sm">
-                                {item.dates && <span>{item.dates}</span>}
-                            </div>
-                            <ul className="list-disc list-inside mt-2 text-sm">
-                                {item.responsibilities?.map((resp, i) => (
-                                    <li key={i} className="text-gray-700">{resp}</li>
-                                ))}
-                            </ul>
-                        </li>
+                        <WorkExperienceItem key={index} {...item} />
                     ))}
                 </ul>
-            )}
+            </CSSTransition>
+            <style>
+                {`
+                .work-experience-enter {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                    max-height: 0;
+                }
+                .work-experience-enter-active {
+                    opacity: 1;
+                    transform: translateY(0);
+                    max-height: 2000px;
+                    transition: opacity 300ms ease-in-out, transform 300ms ease-in-out, max-height 500ms ease-in-out;
+                }
+                .work-experience-exit {
+                    opacity: 1;
+                    transform: translateY(0);
+                    max-height: 2000px;
+                }
+                .work-experience-exit-active {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                    max-height: 0;
+                    transition: opacity 300ms ease-in-out, transform 300ms ease-in-out, max-height 500ms ease-in-out;
+                }
+                `}
+            </style>
         </div>
     );
 };

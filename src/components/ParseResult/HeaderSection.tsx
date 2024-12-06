@@ -1,6 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import GradientButton from '../Buttons/GradientButton';
+import { FaPlus, FaArrowLeft } from 'react-icons/fa';
 
 interface HeaderSectionProps {
     onEdit: () => void;
@@ -11,23 +13,19 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({ onEdit }) => {
     const navigate = useNavigate();
 
     return (
-        <div className="flex justify-between items-center mb-10">
-            <h1 className="text-3xl font-semibold text-gray-800">
-                {t('parseResult.title')}
-            </h1>
-            <div className="space-x-4">
-                <button
-                    onClick={() => navigate('/')}
-                    className="px-5 py-2 border border-indigo-300 rounded-md text-indigo-700 bg-white hover:bg-indigo-50 transition-colors"
-                >
-                    {t('common.back')}
-                </button>
-                <button
-                    onClick={onEdit}
-                    className="px-5 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
-                >
-                    {t('common.edit')}
-                </button>
+        <div>
+            <div className="flex justify-between items-center mb-8">
+                <h1 className="text-3xl font-medium text-gray-700">
+                    {t('parseResult.title')}
+                </h1>
+                <div className="flex space-x-4">
+                    <GradientButton onClick={() => navigate('/')} className="flex items-center">
+                        <FaArrowLeft className="mr-2" /> {t('parseResult.backButton')}
+                    </GradientButton>
+                    <GradientButton onClick={onEdit} className="flex items-center bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                    {t('parseResult.editButton')}<FaPlus className="ml-2" /> 
+                    </GradientButton>
+                </div>
             </div>
         </div>
     );

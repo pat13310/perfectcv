@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { UserCircleIcon } from '@heroicons/react/24/solid';
+import { CSSTransition } from 'react-transition-group';
 
 interface PersonalInfo {
     name?: string;
@@ -35,28 +36,54 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ data, isExpan
                     <ChevronRightIcon className="h-5 w-5 text-gray-500" />
                 )}
             </div>
-            {isExpanded && (
-                <div className="bg-white rounded-lg p-3 shadow-sm">
-                    <div className="grid gap-3">
-                        <div className="flex items-start">
-                            <span className="text-blue-600 font-medium w-28 text-sm">{t('form.personalInfo.name')}:</span>
-                            <span className="text-gray-700 text-sm">{data.name}</span>
-                        </div>
-                        <div className="flex items-start">
-                            <span className="text-blue-600 font-medium w-28 text-sm">{t('form.personalInfo.email')}:</span>
-                            <span className="text-gray-700 text-sm">{data.email}</span>
-                        </div>
-                        <div className="flex items-start">
-                            <span className="text-blue-600 font-medium w-28 text-sm">{t('form.personalInfo.phone')}:</span>
-                            <span className="text-gray-700 text-sm">{data.phone}</span>
-                        </div>
-                        <div className="flex items-start">
-                            <span className="text-blue-600 font-medium w-28 text-sm">{t('form.personalInfo.location')}:</span>
-                            <span className="text-gray-700 text-sm">{data.location}</span>
-                        </div>
-                    </div>
+            <CSSTransition
+                in={isExpanded}
+                timeout={500}
+                classNames="personal-info"
+                unmountOnExit
+            >
+                <div className="grid grid-cols-1 md:grid-cols-1 gap-2 mt-4">
+                    {Object.entries(data).map(([key, value]) => {
+                        if (!value || (Array.isArray(value) && value.length === 0)) return null;
+                        return (
+                            <div key={key} className="bg-white text-sm flex items-center justify-start p-2 ">
+                                <div className="font-medium text-gray-800 capitalize">
+                                    {t(`form.personalInfo.${key}`)}
+                                </div>
+                                <div className="ml-2 font-normal text-gray-00">
+                                    {Array.isArray(value) ? value.join(', ') : value}
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
-            )}
+            </CSSTransition>
+            <style>
+                {`
+                .personal-info-enter {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                    max-height: 0;
+                }
+                .personal-info-enter-active {
+                    opacity: 1;
+                    transform: translateY(0);
+                    max-height: 2000px;
+                    transition: opacity 300ms ease-in-out, transform 300ms ease-in-out, max-height 500ms ease-in-out;
+                }
+                .personal-info-exit {
+                    opacity: 1;
+                    transform: translateY(0);
+                    max-height: 2000px;
+                }
+                .personal-info-exit-active {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                    max-height: 0;
+                    transition: opacity 300ms ease-in-out, transform 300ms ease-in-out, max-height 500ms ease-in-out;
+                }
+                `}
+            </style>
         </div>
     );
 };

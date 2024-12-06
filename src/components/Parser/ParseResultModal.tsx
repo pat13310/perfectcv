@@ -19,7 +19,7 @@ const ParseResultModal: React.FC<ParseResultModalProps> = ({ open, onClose, data
                 return (
                     <ul className="space-y-2">
                         {content.map((item, index) => (
-                            <li key={index} className="border-b border-gray-200 pb-2">
+                            <li key={index} className="border-b border-gray-200 pb-0">
                                 <div className="font-medium">
                                     {item.title || item.degree || item.name || item}
                                 </div>

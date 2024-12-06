@@ -43,7 +43,8 @@
       "summary": "Résumé professionnel",
       "save": "Enregistrer",
       "location": "Adresse",
-      "name": "Nom"
+      "name": "Nom",
+      "links": "Liens"
     },
     "workExperience": {
       "title": "Expérience Professionnelle",
@@ -164,10 +165,13 @@
     }
   },
   "parseResult": {
-    "title": "Résultats de l'analyse du CV"
+    "title": "Résultats de l'analyse du CV",
+    "editButton": "Ajouter ce CV",
+    "backButton": "Retour"
   },
   "common": {
     "edit": "Modifier",
     "back": "Retour"
   }
+
 }

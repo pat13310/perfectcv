@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { MapPinIcon, AcademicCapIcon } from '@heroicons/react/24/solid';
+import { CSSTransition } from 'react-transition-group';
 
 interface Education {
     degree?: string;
@@ -80,7 +81,12 @@ const EducationSection: React.FC<EducationSectionProps> = ({ data, isExpanded, o
                     <ChevronRightIcon className="h-5 w-5 text-gray-500" />
                 )}
             </div>
-            {isExpanded && (
+            <CSSTransition
+                in={isExpanded}
+                timeout={500}
+                classNames="education"
+                unmountOnExit
+            >
                 <ul className="space-y-3">
                     {sortedEducation.map((item, index) => (
                         <li key={index} className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
@@ -105,7 +111,33 @@ const EducationSection: React.FC<EducationSectionProps> = ({ data, isExpanded, o
                         </li>
                     ))}
                 </ul>
-            )}
+            </CSSTransition>
+            <style>
+                {`
+                .education-enter {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                    max-height: 0;
+                }
+                .education-enter-active {
+                    opacity: 1;
+                    transform: translateY(0);
+                    max-height: 2000px;
+                    transition: opacity 300ms ease-in-out, transform 300ms ease-in-out, max-height 500ms ease-in-out;
+                }
+                .education-exit {
+                    opacity: 1;
+                    transform: translateY(0);
+                    max-height: 2000px;
+                }
+                .education-exit-active {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                    max-height: 0;
+                    transition: opacity 300ms ease-in-out, transform 300ms ease-in-out, max-height 500ms ease-in-out;
+                }
+                `}
+            </style>
         </div>
     );
 };
