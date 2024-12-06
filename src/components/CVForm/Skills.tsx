@@ -10,15 +10,6 @@ interface Skill {
   category: string;
 }
 
-const skillLevels = ['Beginner', 'Intermediate', 'Advanced', 'Expert'];
-const defaultCategories = ['Technical', 'Soft Skills', 'Languages', 'Tools'];
-
-const validationSchema = Yup.object({
-  name: Yup.string().required('Skill name is required'),
-  level: Yup.string().required('Skill level is required'),
-  category: Yup.string().required('Category is required'),
-});
-
 const Skills: React.FC = () => {
   const { language } = useLanguage();
   const t = translations[language].form.skills;
@@ -39,10 +30,9 @@ const Skills: React.FC = () => {
   ];
 
   const [skills, setSkills] = useState<Skill[]>([]);
-  const [categories, setCategories] = useState<string[]>(defaultCategoriesTranslated);
-  const [newCategory, setNewCategory] = useState('');
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
-  const validationSchemaTranslated = Yup.object({
+  const validationSchema = Yup.object({
     name: Yup.string().required(v.required),
     level: Yup.string().required(v.required),
     category: Yup.string().required(v.required),
@@ -52,25 +42,24 @@ const Skills: React.FC = () => {
     initialValues: {
       name: '',
       level: '',
-      category: '',
+      category: ''
     },
-    validationSchema: validationSchemaTranslated,
-    onSubmit: (values, { resetForm }) => {
-      setSkills([...skills, values]);
-      resetForm();
+    validationSchema,
+    onSubmit: (values) => {
+      if (editingIndex !== null) {
+        const updatedSkills = [...skills];
+        updatedSkills[editingIndex] = values;
+        setSkills(updatedSkills);
+        setEditingIndex(null);
+      } else {
+        setSkills([...skills, values]);
+      }
+      formik.resetForm();
     },
   });
 
   const handleDelete = (index: number) => {
     setSkills(skills.filter((_, i) => i !== index));
-  };
-
-  const handleAddCategory = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newCategory && !categories.includes(newCategory)) {
-      setCategories([...categories, newCategory]);
-      setNewCategory('');
-    }
   };
 
   const groupedSkills = skills.reduce((acc, skill) => {
@@ -172,7 +161,7 @@ const Skills: React.FC = () => {
               }`}
             >
               <option value="">{t.selectCategory}</option>
-              {categories.map((category) => (
+              {defaultCategoriesTranslated.map((category) => (
                 <option key={category} value={category}>
                   {category}
                 </option>
@@ -182,26 +171,6 @@ const Skills: React.FC = () => {
               <p className="mt-1 text-sm text-red-500">{formik.errors.category}</p>
             )}
           </div>
-        </div>
-
-        {/* Add new category */}
-        <div className="flex items-center gap-4">
-          <div className="flex-grow">
-            <input
-              type="text"
-              value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
-              placeholder={t.newCategoryPlaceholder}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <button
-            type="button"
-            onClick={handleAddCategory}
-            className="px-4 py-2 bg-gray-600 text-white font-medium rounded-2xl hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-          >
-            {t.addCategory}
-          </button>
         </div>
 
         <div>

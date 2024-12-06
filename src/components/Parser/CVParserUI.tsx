@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CVParser } from '../../services/CVParser';
 import { useLanguage } from '../../context/LanguageContext';
 import { CVData } from '../../context/CVContext';
 
-interface ParsingStatus {
+type ParsingStatus = {
   stage: 'idle' | 'detecting' | 'extracting' | 'analyzing' | 'complete' | 'error';
   progress: number;
   error?: string;
-}
+};
 
 interface CVParserUIProps {
   onParseComplete: (data: { data: Partial<CVData>; language: 'fr' | 'en'; suggestions: Record<keyof CVData, string[]> }) => void;
@@ -16,17 +16,87 @@ interface CVParserUIProps {
 }
 
 const CVParserUI: React.FC<CVParserUIProps> = ({ onParseComplete, onError }) => {
-  const [status, setStatus] = useState<ParsingStatus>({ stage: 'idle', progress: 0 });
+  const [status, setStatus] = useState<ParsingStatus>({
+    stage: 'idle',
+    progress: 0
+  });
+
   const { language } = useLanguage();
   const navigate = useNavigate();
+
+  const getStatusMessage = () => {
+    const messages = {
+      fr: {
+        idle: 'Déposez votre CV ici',
+        detecting: 'Détection du format...',
+        extracting: 'Extraction du texte...',
+        analyzing: 'Analyse du contenu...',
+        complete: 'Analyse terminée !',
+        error: 'Une erreur est survenue'
+      },
+      en: {
+        idle: 'Drop your CV here',
+        detecting: 'Detecting format...',
+        extracting: 'Extracting text...',
+        analyzing: 'Analyzing content...',
+        complete: 'Analysis complete!',
+        error: 'An error occurred'
+      }
+    };
+
+    return messages[language][status.stage];
+  };
+
+  const getStatusDescription = () => {
+    const descriptions = {
+      fr: {
+        idle: '',
+        detecting: 'Nous vérifions le format de votre fichier...',
+        extracting: 'Nous extrayons les informations de votre CV...',
+        analyzing: 'Notre IA analyse votre parcours professionnel...',
+        complete: 'Votre CV a été analysé avec succès !',
+        error: 'Veuillez réessayer avec un autre fichier'
+      },
+      en: {
+        idle: '',
+        detecting: 'We are checking your file format...',
+        extracting: 'We are extracting information from your CV...',
+        analyzing: 'Our AI is analyzing your professional background...',
+        complete: 'Your CV has been successfully analyzed!',
+        error: 'Please try again with another file'
+      }
+    };
+
+    return descriptions[language][status.stage];
+  };
 
   const handleFileUpload = async (file: File) => {
     try {
       setStatus({ stage: 'detecting', progress: 25 });
       
       const result = await CVParser.parseCV(file, (progress) => {
+        // Conversion des stages en minuscules
+        let stage: ParsingStatus['stage'];
+        switch (progress.stage) {
+          case 'FILE_TYPE':
+            stage = 'detecting';
+            break;
+          case 'EXTRACTION':
+            stage = 'extracting';
+            break;
+          case 'ANALYSIS':
+            stage = 'analyzing';
+            break;
+          case 'COMPLETE':
+            stage = 'complete';
+            break;
+          default:
+            stage = 'analyzing';
+        }
+        
+        console.log('Progress update:', stage, progress.progress);
         setStatus({
-          stage: progress.stage.toLowerCase() as ParsingStatus['stage'],
+          stage,
           progress: progress.progress
         });
       });
@@ -52,6 +122,7 @@ const CVParserUI: React.FC<CVParserUIProps> = ({ onParseComplete, onError }) => 
       navigate('/parse-result', { state: { data: result.data } });
       
     } catch (error: any) {
+      console.error('Upload error:', error); // Debug log
       setStatus({
         stage: 'error',
         progress: 0,
@@ -61,22 +132,9 @@ const CVParserUI: React.FC<CVParserUIProps> = ({ onParseComplete, onError }) => 
     }
   };
 
-  const getStatusText = () => {
-    switch (status.stage) {
-      case 'detecting':
-        return 'Détection du type de fichier...';
-      case 'extracting':
-        return 'Extraction du texte...';
-      case 'analyzing':
-        return 'Analyse du contenu...';
-      case 'complete':
-        return 'Analyse terminée !';
-      case 'error':
-        return `Erreur: ${status.error}`;
-      default:
-        return 'Prêt à analyser';
-    }
-  };
+  useEffect(() => {
+    console.log('Status changed:', status); // Debug log
+  }, [status]);
 
   return (
     <>
@@ -127,7 +185,7 @@ const CVParserUI: React.FC<CVParserUIProps> = ({ onParseComplete, onError }) => 
                   </svg>
                 </div>
                 <p className="text-lg font-medium text-gray-900 mb-2">
-                  Déposez votre CV ici
+                  {getStatusMessage()}
                 </p>
                 <p className="text-sm text-gray-500">
                   ou cliquez pour sélectionner un fichier
@@ -136,9 +194,9 @@ const CVParserUI: React.FC<CVParserUIProps> = ({ onParseComplete, onError }) => 
             )}
 
             {status.stage !== 'idle' && (
-              <div className="py-4">
+              <div className="py-4 text-center">
                 <div className="mb-4">
-                  {status.stage === 'error' ? (
+                  {status.stage === 'error' && (
                     <svg
                       className="w-16 h-16 mx-auto text-red-500 animate-bounce"
                       fill="none"
@@ -152,7 +210,9 @@ const CVParserUI: React.FC<CVParserUIProps> = ({ onParseComplete, onError }) => 
                         d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                  ) : status.stage === 'complete' ? (
+                  )}
+                  
+                  {status.stage === 'complete' && (
                     <svg
                       className="w-16 h-16 mx-auto text-green-500 animate-bounce"
                       fill="none"
@@ -166,17 +226,25 @@ const CVParserUI: React.FC<CVParserUIProps> = ({ onParseComplete, onError }) => 
                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                  ) : (
+                  )}
+                  
+                  {(status.stage !== 'error' && status.stage !== 'complete') && (
                     <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-purple-500 mx-auto" />
                   )}
                 </div>
-                <p className={`text-lg font-medium ${
-                  status.stage === 'error' ? 'text-red-600' :
-                  status.stage === 'complete' ? 'text-green-600' :
-                  'text-purple-600'
-                }`}>
-                  {getStatusText()}
-                </p>
+
+                <div className="mt-4">
+                  <h3 className={`text-lg font-medium ${
+                    status.stage === 'error' ? 'text-red-600' :
+                    status.stage === 'complete' ? 'text-green-600' :
+                    'text-purple-600'
+                  }`}>
+                    {getStatusMessage()}
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-2">
+                    {getStatusDescription()}
+                  </p>
+                </div>
               </div>
             )}
           </div>

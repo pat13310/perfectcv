@@ -1,3 +1,5 @@
+import * as fsType from 'fs';
+
 type LogLevel = 'info' | 'warn' | 'error' | 'debug';
 
 interface LogMessage {
@@ -6,8 +8,6 @@ interface LogMessage {
     timestamp: string;
     data?: any;
 }
-
-import * as fsType from 'fs';
 
 let fs: typeof fsType | null = null;
 if (typeof window === 'undefined') {

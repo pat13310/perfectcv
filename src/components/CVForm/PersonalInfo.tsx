@@ -5,15 +5,6 @@ import { useLanguage } from '../../context/LanguageContext';
 import { translations } from '../../context/LanguageContext';
 import GradientButton from '../Buttons/GradientButton';
 
-const validationSchema = Yup.object({
-  firstName: Yup.string().required('required'),
-  lastName: Yup.string().required('required'),
-  email: Yup.string().email('invalidEmail').required('required'),
-  phone: Yup.string().required('required'),
-  address: Yup.string(),
-  summary: Yup.string(),
-});
-
 const PersonalInfo: React.FC = () => {
   const { language } = useLanguage();
   const t = translations[language].form.personalInfo;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useCV } from '../../context/CVContext';
 import { CVData } from '../../context/CVContext';
@@ -19,91 +19,74 @@ const ImproveCv: React.FC = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const file = location.state?.file as File;
-    if (!file) {
-      navigate('/');
-      return;
-    }
+  const analyzeCVData = useCallback(() => {
+    const results: AnalysisResult[] = [];
 
+    // Analyze personal info
+    const personalInfoFields = Object.values(cvData.personalInfo);
+    const emptyFields = personalInfoFields.filter(field => !field).length;
+    results.push({
+      section: 'personalInfo',
+      status: emptyFields === personalInfoFields.length ? 'empty' : emptyFields > 0 ? 'partial' : 'complete',
+      message: `Personal info has ${emptyFields} empty fields`
+    });
+
+    // Analyze work experience
+    results.push({
+      section: 'workExperience',
+      status: cvData.workExperience.length === 0 ? 'empty' : cvData.workExperience.length < 2 ? 'partial' : 'complete',
+      message: `Work experience has ${cvData.workExperience.length} entries`
+    });
+
+    // Analyze education
+    results.push({
+      section: 'education',
+      status: cvData.education.length === 0 ? 'empty' : 'complete',
+      message: `Education has ${cvData.education.length} entries`
+    });
+
+    // Analyze skills
+    const hasSkills = cvData.skills.length > 0;
+    results.push({
+      section: 'skills',
+      status: !hasSkills ? 'empty' : 'complete',
+      message: `Skills section is ${!hasSkills ? 'empty' : 'complete'}`
+    });
+
+    setAnalysisResults(results);
+    setProgress(100);
+    setIsAnalyzing(false);
+  }, [cvData]);
+
+  useEffect(() => {
     const analyzeCV = async () => {
       try {
-        setProgress(20);
-        const parsedData = await CVParser.parseCV(file);
-        setProgress(60);
+        if (location.state?.file) {
+          setIsAnalyzing(true);
+          setProgress(0);
 
-        // Mettre à jour le contexte avec les données analysées
-        if (parsedData.data.personalInfo) {
-          const personalInfo: CVData['personalInfo'] = {
-            firstName: parsedData.data.personalInfo.firstName || '',
-            lastName: parsedData.data.personalInfo.lastName || '',
-            email: parsedData.data.personalInfo.email || '',
-            phone: parsedData.data.personalInfo.phone || '',
-            address: parsedData.data.personalInfo.address || '',
-            summary: parsedData.data.personalInfo.summary || ''
-          };
-          updatePersonalInfo(personalInfo);
-        }
+          const result = await CVParser.parseCV(location.state.file);
+          setProgress(50);
 
-        parsedData.data.workExperience?.forEach(exp => {
-          addWorkExperience(exp);
-        });
+          if (result.data) {
+            if (result.data.personalInfo) updatePersonalInfo(result.data.personalInfo);
+            result.data.workExperience?.forEach(exp => addWorkExperience(exp));
+            result.data.education?.forEach(edu => addEducation(edu));
+            result.data.skills?.forEach(skill => addSkill(skill));
+            result.data.projects?.forEach(project => addProject(project));
 
-        parsedData.data.education?.forEach(edu => {
-          addEducation(edu);
-        });
-
-        parsedData.data.skills?.forEach(skill => {
-          addSkill(skill);
-        });
-
-        parsedData.data.projects?.forEach(project => {
-          addProject(project);
-        });
-
-        setProgress(80);
-
-        // Analyser chaque section du CV
-        const results: AnalysisResult[] = [
-          {
-            section: 'personalInfo',
-            status: Object.values(parsedData.data.personalInfo || {}).every(v => v) ? 'complete' : 
-                   Object.values(parsedData.data.personalInfo || {}).some(v => v) ? 'partial' : 'empty',
-            message: 'Informations personnelles'
-          },
-          {
-            section: 'workExperience',
-            status: (parsedData.data.workExperience?.length || 0) > 0 ? 'complete' : 'empty',
-            message: 'Expérience professionnelle'
-          },
-          {
-            section: 'education',
-            status: (parsedData.data.education?.length || 0) > 0 ? 'complete' : 'empty',
-            message: 'Formation'
-          },
-          {
-            section: 'skills',
-            status: (parsedData.data.skills?.length || 0) > 0 ? 'complete' : 'empty',
-            message: 'Compétences'
-          },
-          {
-            section: 'projects',
-            status: (parsedData.data.projects?.length || 0) > 0 ? 'complete' : 'empty',
-            message: 'Projets'
+            // Analyze the updated CV data
+            analyzeCVData();
           }
-        ];
-
-        setAnalysisResults(results);
-        setProgress(100);
-        setIsAnalyzing(false);
+        }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Une erreur est survenue lors de l\'analyse');
+        setError(err instanceof Error ? err.message : 'An error occurred while analyzing the CV');
         setIsAnalyzing(false);
       }
     };
 
     analyzeCV();
-  }, [location.state, navigate, updatePersonalInfo, addWorkExperience, addEducation, addSkill, addProject]);
+  }, [location.state, navigate, updatePersonalInfo, addWorkExperience, addEducation, addSkill, addProject, analyzeCVData]);
 
   const getStatusColor = (status: AnalysisResult['status']) => {
     switch (status) {
